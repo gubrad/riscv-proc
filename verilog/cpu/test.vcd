@@ -1,0 +1,106 @@
+$date
+	Fri Oct  9 13:10:58 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb_cpu_reg $end
+$var wire 32 ! d2 [31:0] $end
+$var wire 32 " d1 [31:0] $end
+$var reg 5 # a1 [4:0] $end
+$var reg 5 $ a2 [4:0] $end
+$var reg 5 % a3 [4:0] $end
+$var reg 1 & clk $end
+$var reg 32 ' wd [31:0] $end
+$var reg 1 ( we $end
+$scope module uut $end
+$var wire 5 ) a1 [4:0] $end
+$var wire 5 * a2 [4:0] $end
+$var wire 5 + a3 [4:0] $end
+$var wire 1 & clk $end
+$var wire 32 , d1 [31:0] $end
+$var wire 32 - d2 [31:0] $end
+$var wire 32 . wd [31:0] $end
+$var wire 1 ( we $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b0 .
+bx -
+bx ,
+b0 +
+b0 *
+b0 )
+0(
+b0 '
+0&
+b0 %
+b0 $
+b0 #
+bx "
+bx !
+$end
+#10000
+1&
+#20000
+0&
+1(
+b1100100 '
+b1100100 .
+b1 %
+b1 +
+#30000
+1&
+#40000
+0&
+b11001000 '
+b11001000 .
+b10 %
+b10 +
+#50000
+1&
+#60000
+0&
+b11001000 !
+b11001000 -
+b10 $
+b10 *
+b1100100 "
+b1100100 ,
+b1 #
+b1 )
+0(
+#70000
+1&
+1(
+b100101100 '
+b100101100 .
+b11 %
+b11 +
+#80000
+0&
+#90000
+1&
+b100101100 !
+b100101100 -
+b11 $
+b11 *
+b11001000 "
+b11001000 ,
+b10 #
+b10 )
+0(
+#100000
+0&
+#110000
+1&
+#120000
+0&
