@@ -22,17 +22,24 @@ module decode (
     assign rs2 = instruction[24:20];
     assign rd = instruction[11:7];
 
+// bne beq j
+
     always @(*) begin
         imm32 = 32'b0;
         case (opcode)
             7'b0110011: begin
-                // R-type
+                // R-type ALU
                 r1 = 1;
                 r2 = 1;
                 rw = 1;
                 imm = 0;
                 alu = 1;
             end
+
+            7'b0010111: begin
+                // auipc
+            end
+
             7'b0110111: begin
                 // lui
             end
@@ -51,6 +58,14 @@ module decode (
 
             7'b1100011: begin
                 // branch
+            end
+
+            7'b1101111: begin
+                // jal
+            end
+
+            7'b1100111: begin
+                // jalr
             end
 
             default: begin

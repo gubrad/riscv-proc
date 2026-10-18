@@ -4,6 +4,7 @@ module cpu (
 );
 
     reg [31:0] pc;
+    wire [31:0]pcp4;
 
     wire [4:0] rs1;
     wire use_reg1;
@@ -23,24 +24,11 @@ module cpu (
 
     wire [31:0] write_data;
 
-    gpr register_file (
-        .clk(clk),
-        .rs1(rs1),
-        .rs2(rs2),
-        .write_enable(rw),
-        .rd(rd),
-        .write_data(write_data),
-        .reg1(reg1),
-        .reg2(reg2)
-    );
-
-    alu alu_1 (
-
-    );
+    assign pcp4 = pc + 4;
 
 
     always @(negedge clk) begin
-        pc <= pc + 4;
+        pc = pcp4;
     end
 
     always @(posedge clk) begin
