@@ -19,7 +19,6 @@ module cpu_reg(
         end
     end
 
-
     assign d1 = a1 == 0 ? 0 : mem[a1];
     assign d2 = a2 == 0 ? 0 : mem[a2];
 
