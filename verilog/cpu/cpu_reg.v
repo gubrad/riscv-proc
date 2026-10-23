@@ -13,13 +13,14 @@ module cpu_reg(
         else mem[a3] = mem[a3];
     end;
 
-    initial begin 
-        for (i = 0; i < 32; i = i + 1) begin
+    
+    initial begin
+        for (integer i = 0; i < 32; i = i + 1) begin
             mem[i] = 0;
         end
     end
 
-    assign d1 = a1 == 0 ? 0 : mem[a1];
-    assign d2 = a2 == 0 ? 0 : mem[a2];
+assign d1 = (a1 == 0) ? 32'b0 : mem[a1];
+assign d2 = (a2 == 0) ? 32'b0 : mem[a2];
 
 endmodule

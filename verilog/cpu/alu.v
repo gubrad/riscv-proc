@@ -9,58 +9,43 @@ module alu (
     output reg trap,
 );
 
-    wire f7;
-    assign f7 = funct7[5];
+    wire sub_or_sra;
+    assign sub_or_sra = (funct7 == 7'b0100000);
 
     always @(*) begin
         result = 32'b0;
-        trap = 0;
-        if (alu){
+        trap = 1'b0;
+
+        if (alu) begin
             case (funct3)
-                3'b000: begin // add/sub
-                    if(f7)
+                3'b000: begin
+                    if (sub_or_sra)
                         result = a - b;
                     else
                         result = a + b;
                 end
 
-                3'b001: begin // sll
-                    result = a << b;
-                end
+                3'b001: result = a << b[4:0];
 
-                3'b010: begin // slt
-                    result = ($signed(a) < $signed(b)) ? 1 : 0;
-                end
+                3'b010: result = ($signed(a) < $signed(b)) ? 32'd1 : 32'd0;
 
-                3'b011: begin // sltu
-                    result = (a < b) ? 1 : 0;
-                end
+                3'b011: result = (a < b) ? 32'd1 : 32'd0;
 
-                3'b100: begin // xor
-                    result = a ^ b;
-                end
+                3'b100: result = a ^ b;
 
-                3'b101: begin // srl/sra
-                    if(f7)
-                        result = $signed(a) >>> b;
+                3'b101: begin
+                    if (sub_or_sra)
+                        result = $signed(a) >>> b[4:0];
                     else
-                        result = a >> b;
+                        result = a >> b[4:0];
                 end
 
-                3'b110: begin // or
-                    result = a | b;
-                end
+                3'b110: result = a | b;
+                3'b111: result = a & b;
 
-                3'b111: begin // and
-                    result = a & b;
-                end
-
-                default: begin
-                    trap = 1;
-                end
+                default: trap = 1'b1;
             endcase
-        }
-
+        end
     end
 
 endmodule
