@@ -4,30 +4,33 @@ module decode (
 
     //register control
     output [4:0] rsel1,
-    output reg r1,
     output [4:0] rsel2,
-    output reg r2,
     output [4:0] rdest,
-    output reg rwrite,
+
+    output reg reg_write,
     
     // mem block control
     output reg mem_write,
     output reg mem_read,
 
-    //dest sel
-    output reg[1:0] destsel, // ALU MEM PC+4 IMM
+    //result to reg selection
+    output reg[1:0] ressel, // ALU MEM PC+4 IMM
 
-    //in sel
+    //alu input selection
     output reg[1:0] alusel1, // 0 r1 pc+4
     output reg[1:0] alusel2, // 0 r2 imm
+
+    //jumps
+    output reg branch,
+    output reg jalr.
+    output reg jump,
 
 
     output [2:0] funct3,
     output [6:0] funct7,
 
     output reg [31:0] imm32,
-    output reg imm,
-    output reg alu,
+    output reg alu_enable,
 );
 
     wire[6:0] opcode = instruction[6:0];
@@ -48,8 +51,8 @@ module decode (
         mem_write  = 1'b0;
         mem_read   = 1'b0;
 
-        alu_src    = 1'b0;
-        alu_a_pc   = 1'b0;
+        alusel1    = 2'b00;
+        alusel2   = 2'b00;
         alu_enable = 1'b0;
 
         result_src = 2'b00;
@@ -57,20 +60,16 @@ module decode (
         branch     = 1'b0;
         jump       = 1'b0;
         jalr       = 1'b0;
-        illegal    = 1'b0;
-
-        alu_funct3 = 3'b000;
-        alu_funct7 = 7'b0000000;
 
 
         case (opcode)
             7'b0110011: begin
                 // R-type ALU
-                r1 = 1;
-                r2 = 1;
-                rwrite = 1;
-                imm = 0;
-                alu = 1;
+                reg_write = 1;
+                alusel1 = 2'b01;
+                alusel2 = 2'b01;
+                ressel = 2'b00;
+                alu_enable = 1;
             end
 
             7'b0010111: begin
@@ -79,10 +78,19 @@ module decode (
 
             7'b0110111: begin
                 // lui
+                reg_write = 1;
+                imm32[31:12] = instruction[31:12];
+                ressel = 2'b11;
             end
 
             7'b0010011: begin
                 // I-type ALU
+                reg_write = 1;
+                alusel1 = 2'b00;
+                alusel2 = 2'b10;
+                imm32[11:0] = instruction[11:0];
+                ressel = 2'b00;
+                alu_enable = 1;
             end
 
             7'b0000011: begin
