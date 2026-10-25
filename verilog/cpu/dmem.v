@@ -1,7 +1,9 @@
 
 module dmem (input clk, we,
              input [31:0] a, wd,
-             output [31:0] rd);
+             input [2:0] f3,
+             output [31:0] rd,
+             );
  
   reg [31:0] RAM[0:127];
  

@@ -2,24 +2,32 @@
 module alu (
     input  [31:0] a,
     input  [31:0] b,
-    input [2:0] funct3,
-    input [6:0] funct7,
+    input [2:0] aluctl,
+    input alu_sra,
     output reg [31:0] result,
     input alu,
     output reg trap,
 );
 
-    wire sub_or_sra;
-    assign sub_or_sra = (funct7 == 7'b0100000);
+    always @(*) begin
+        if (jump && jalr)
+            next_pc = {alu_result[31:1], 1'b0};
+        else if (jump)
+            next_pc = alu_result;
+        else if (branch && branch_result)
+            next_pc = alu_result;
+        else
+            next_pc = pc + 32'd4;
+    end
 
     always @(*) begin
         result = 32'b0;
         trap = 1'b0;
 
         if (alu) begin
-            case (funct3)
+            case (aluctl)
                 3'b000: begin
-                    if (sub_or_sra)
+                    if (alu_sra)
                         result = a - b;
                     else
                         result = a + b;
@@ -34,7 +42,7 @@ module alu (
                 3'b100: result = a ^ b;
 
                 3'b101: begin
-                    if (sub_or_sra)
+                    if (alu_sra)
                         result = $signed(a) >>> b[4:0];
                     else
                         result = a >> b[4:0];
