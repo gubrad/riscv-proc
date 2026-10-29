@@ -2,7 +2,7 @@
 module comparator (
     input  [31:0] r1, r2,
     input [2:0] f3,
-    output reg result,
+    output reg result
 );
 
     always @(*) begin

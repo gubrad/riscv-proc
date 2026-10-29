@@ -32,7 +32,9 @@ module decode (
     output reg [2:0] f3,
     output reg [2:0] aluctl,
     output reg [6:0] f7,
-    output reg alu_sra
+    output reg alu_sra,
+
+    output reg system
 );
 
     wire[6:0] opcode = instruction[6:0];
@@ -67,6 +69,7 @@ module decode (
         aluctl = instruction[14:12];
         alu_sra = 1'b0;
         
+        system = 1'b0;
 
 
         case (opcode)
@@ -188,6 +191,9 @@ module decode (
                 ressel = 2'b10;
 
                 alu_enable = 1'b1;
+            end
+            7'b1110011: begin
+                system = 1'b1;
             end
 
             default: begin

@@ -6,19 +6,9 @@ module alu (
     input alu_sra,
     output reg [31:0] result,
     input alu,
-    output reg trap,
+    output reg trap
 );
 
-    always @(*) begin
-        if (jump && jalr)
-            next_pc = {alu_result[31:1], 1'b0};
-        else if (jump)
-            next_pc = alu_result;
-        else if (branch && branch_result)
-            next_pc = alu_result;
-        else
-            next_pc = pc + 32'd4;
-    end
 
     always @(*) begin
         result = 32'b0;
