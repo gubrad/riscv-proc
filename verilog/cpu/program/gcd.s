@@ -23,7 +23,7 @@ b_smaller:
     jal  x0, gcd_loop
 
 gcd_done:
-    addi x17, x1, 0       # GCD result = 6
+    addi x17, x1, 0       # GCD result
     addi x31, x0, 1       # Done flag = 1
     la x1, result
     sw x17, 0(x1)
