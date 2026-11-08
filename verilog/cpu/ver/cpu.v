@@ -3,20 +3,13 @@ module cpu (
     input clk
 );
 
-    // =========================
-    // Program counter
-    // =========================
-
     reg  [31:0] pc;
     wire [31:0] pc_plus4;
     reg  [31:0] next_pc;
 
     assign pc_plus4 = pc + 32'd4;
 
-    // =========================
-    // Instruction memory
-    // =========================
-
+// i mem
     wire [31:0] instruction;
 
     imem imem_inst (
@@ -24,36 +17,40 @@ module cpu (
         .rd (instruction)
     );
 
-    // =========================
-    // Decoder
-    // =========================
-
+//reg selectors
     wire [4:0] rsel1;
     wire [4:0] rsel2;
     wire [4:0] rdest;
 
+// writeback info
     wire reg_write;
     wire mem_write;
     wire mem_read;
 
+// alu selectors
     wire [1:0] ressel;
     wire [1:0] alusel1;
     wire [1:0] alusel2;
 
+// branching
     wire branch;
     wire jalr;
     wire jump;
 
+// decode from alu
     wire [31:0] imm32;
 
+// alu control
     wire alu_enable;
     wire [2:0] f3;
     wire [2:0] aluctl;
     wire [6:0] f7;
     wire alu_sra;
 
+// for system exc
     wire system;
 
+// decode assingnent
     decode decode_inst (
         .instruction (instruction),
 
@@ -86,10 +83,8 @@ module cpu (
         .system      (system)
     );
 
-    // =========================
-    // Register file
-    // =========================
 
+// register outputs
     wire [31:0] r1_data;
     wire [31:0] r2_data;
 
@@ -109,10 +104,8 @@ module cpu (
         .d2  (r2_data)
     );
 
-    // =========================
-    // ALU input multiplexers
-    // =========================
 
+// Alu muxes
     wire [31:0] alu_a;
     wire [31:0] alu_b;
 
@@ -127,13 +120,10 @@ module cpu (
         (alusel2 == 2'b10) ? imm32   :
         32'b0;
 
-    // =========================
-    // ALU
-    // =========================
-
     wire [31:0] alu_result;
     wire alu_trap;
 
+// alu assignment
     alu alu_inst (
         .a       (alu_a),
         .b       (alu_b),
@@ -144,10 +134,7 @@ module cpu (
         .trap    (alu_trap)
     );
 
-    // =========================
-    // Branch comparator
-    // =========================
-
+// branch comparator assignment
     wire branch_result;
 
     comparator comparator_inst (
@@ -157,10 +144,7 @@ module cpu (
         .result (branch_result)
     );
 
-    // =========================
-    // Data memory
-    // =========================
-
+// memory assignment
     wire [31:0] mem_data;
 
     dmem dmem_inst (
@@ -173,8 +157,8 @@ module cpu (
     );
 
 
+// writeback assignment
     reg [31:0] write_data_mux;
-
     assign write_data = write_data_mux;
 
     always @(*) begin
@@ -189,6 +173,7 @@ module cpu (
     end
 
 
+// branch selecting
     always @(*) begin
         if (jump && jalr)
             next_pc = {alu_result[31:1], 1'b0};
@@ -204,6 +189,7 @@ module cpu (
         pc = 32'b0;
     end
 
+// pc updating
     always @(posedge clk) begin
         pc <= next_pc;
     end

@@ -1,13 +1,13 @@
 .option norvc
 .text
 .globl _start
+.align 2
 
 _start:
-    addi x30, x0, 0       # Error code: 0 = success
-    addi x31, x0, 0       # Done flag
-
-    li x1, 5435332       # a = 48
-    li x2, 302190       # b = 18
+    la x1, number1
+    la x2, number2
+    lw x1, 0(x1)
+    lw x2, 0(x2)
     add x15, x0, x1
     add x16, x0, x2
 
@@ -25,7 +25,18 @@ b_smaller:
 gcd_done:
     addi x17, x1, 0       # GCD result = 6
     addi x31, x0, 1       # Done flag = 1
+    la x1, result
+    sw x17, 0(x1)
 
-finish:
     ebreak
-    jal  x0, finish       # Stop here
+
+.data
+.align 2
+number1:
+    .word 123824
+
+number2:
+    .word 654548
+
+result:
+    .word 0

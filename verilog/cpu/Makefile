@@ -1,9 +1,12 @@
+
 .DEFAULT_GOAL := all
 
 PROGRAM := program/gcd
 VER_DIR := ver
+
 SIM := cpu_sim
-MEMFILE := memfile.dat
+IMEM_FILE := imem.dat
+DMEM_FILE := dmem.dat
 
 IVERILOG := iverilog
 VVP := vvp
@@ -25,30 +28,41 @@ VERILOG_SOURCES := \
 
 all: run
 
+# build program
 program: $(PROGRAM).elf
 
+# compile program
 $(PROGRAM).o: $(PROGRAM).s
 	$(AS) -march=rv32i -mabi=ilp32 -o $@ $<
 
+# link program
 $(PROGRAM).elf: $(PROGRAM).o
-	$(LD) -m elf32lriscv -Ttext=0 -e _start -o $@ $<
+	$(LD) -m elf32lriscv -Ttext=0 -Tdata=0x100 -e _start -o $@ $<
 
-memory: $(MEMFILE)
+# memfiles
+memory: $(IMEM_FILE) $(DMEM_FILE)
 
-$(MEMFILE): $(PROGRAM).elf
+$(IMEM_FILE): $(PROGRAM).elf
 	$(OBJCOPY) -O verilog --verilog-data-width=4 \
 		--only-section=.text $< $@
 
-compile: sim
+$(DMEM_FILE): $(PROGRAM).elf
+	$(OBJCOPY) -O verilog --verilog-data-width=4 \
+		--only-section=.data $< $@
+
+# compile sim
+compile: memory sim
 
 sim: $(SIM)
 
 $(SIM): $(VERILOG_SOURCES)
 	$(IVERILOG) -g2012 -Wall -s tb -o $@ $(VERILOG_SOURCES)
 
-run: $(MEMFILE) $(SIM)
+# run simulation
+run: compile
 	$(VVP) $(SIM)
 
 clean:
-	rm -f $(SIM) *.vcd *.vvp $(PROGRAM).o $(PROGRAM).elf $(MEMFILE)
-	
+	rm -f $(SIM) *.vcd *.vvp \
+		$(PROGRAM).o $(PROGRAM).elf \
+		$(IMEM_FILE) $(DMEM_FILE)
